@@ -269,6 +269,14 @@ def format_response(result: Dict[str, Any]) -> str:
                 details.append("**Execution**: ✅ Success")
             else:
                 details.append("**Execution**: ❌ Failed")
+        if data.get("return_value") not in (None, ""):
+            details.append(f"**Return Value**: {data['return_value']}")
+        if data.get("output"):
+            details.append("**Output**:")
+            details.append(data["output"].rstrip())
+        if data.get("errors"):
+            details.append("**Errors**:")
+            details.append(data["errors"].rstrip())
         if "elements_created" in data and data["elements_created"]:
             details.append(f"**Created**: {len(data['elements_created'])} elements")
 
