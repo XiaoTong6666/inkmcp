@@ -53,9 +53,12 @@ def get_element_info_data(element) -> Dict[str, Any]:
 
     # Get all attributes
     attributes = {}
-    for key, value in element.attrib.items():
-        clean_key = key.split('}')[-1]  # Remove namespace prefixes
-        attributes[clean_key] = value
+    try:
+        for key, value in element.attrib.items():
+            clean_key = key.split('}')[-1]  # Remove namespace prefixes
+            attributes[clean_key] = value
+    except Exception:
+        pass
 
     element_info["attributes"] = attributes
 
@@ -71,12 +74,20 @@ def get_element_info_data(element) -> Dict[str, Any]:
     if style_info:
         element_info["style"] = style_info
 
-    child_count = sum(1 for child in element if get_clean_tag_name(child) is not None)
-    if child_count:
-        element_info["child_count"] = child_count
+    try:
+        child_count = sum(
+            1 for child in list(element) if get_clean_tag_name(child) is not None
+        )
+        if child_count:
+            element_info["child_count"] = child_count
+    except Exception:
+        pass
 
-    text_content = "".join(element.itertext()).strip()
-    if text_content:
-        element_info["text"] = text_content
+    try:
+        text_content = (element.text or "").strip()
+        if text_content:
+            element_info["text"] = text_content
+    except Exception:
+        pass
 
     return element_info
