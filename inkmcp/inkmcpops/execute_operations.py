@@ -4,7 +4,7 @@ import io
 import traceback
 from contextlib import redirect_stdout, redirect_stderr
 from typing import Dict, Any
-from .common import create_success_response, create_error_response
+from .common import create_success_response, create_error_response, get_clean_tag_name
 
 
 def execute_code(extension_instance, svg, attributes: Dict[str, Any]) -> Dict[str, Any]:
@@ -154,7 +154,9 @@ def execute_code(extension_instance, svg, attributes: Dict[str, Any]) -> Dict[st
             # Get element counts by type
             element_counts = {}
             for element in svg.iter():
-                tag = element.tag.split('}')[-1] if '}' in element.tag else element.tag
+                tag = get_clean_tag_name(element)
+                if tag is None:
+                    continue
                 element_counts[tag] = element_counts.get(tag, 0) + 1
 
             result_data["current_element_counts"] = element_counts
